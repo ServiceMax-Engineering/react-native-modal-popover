@@ -1,3 +1,5 @@
+import {  I18nManager } from 'react-native';
+
 export interface Point {
   x: number;
   y: number;
@@ -15,7 +17,7 @@ export interface Size {
   height: number;
 }
 
-export type Placement = 'top' | 'right' | 'bottom' | 'left';
+export type Placement = 'top' | 'end' | 'bottom' | 'start';
 
 export interface Geometry {
   origin: Point;
@@ -34,17 +36,17 @@ export const computeGeometry =
       return computeTopGeometry(displayArea, fromRect, contentSize, effectiveArrowSize);
     case 'bottom':
       return computeBottomGeometry(displayArea, fromRect, contentSize, effectiveArrowSize);
-    case 'left':
-      return computeLeftGeometry(displayArea, fromRect, contentSize, effectiveArrowSize);
-    case 'right':
-      return computeRightGeometry(displayArea, fromRect, contentSize, effectiveArrowSize);
+    case 'start':
+      return computeStartGeometry(displayArea, fromRect, contentSize, effectiveArrowSize);
+    case 'end':
+      return computeEndGeometry(displayArea, fromRect, contentSize, effectiveArrowSize);
     default:
       return computeAutoGeometry(displayArea, fromRect, contentSize, effectiveArrowSize);
   }
 };
 
 const getArrowSize = (size: Size, placement: Placement | 'auto'): Size => {
-  if (placement === 'left' || placement === 'right') {
+  if (placement === 'start' || placement === 'end') {
     return { width: size.height, height: size.width };
   }
   return size;
@@ -78,21 +80,21 @@ const computeBottomGeometry: ComputeGeometry = (displayArea, fromRect, contentSi
   return { origin, anchor, placement: 'bottom' };
 };
 
-const computeLeftGeometry: ComputeGeometry = (displayArea, fromRect, contentSize, arrowSize) => {
+const computeStartGeometry: ComputeGeometry = (displayArea, fromRect, contentSize, arrowSize) => {
   const origin = {
-    x: fromRect.x - contentSize.width - arrowSize.width,
+    x: fromRect.x - contentSize.width - (I18nManager.isRTL ? 0 : arrowSize.width),
     y: Math.min(
       displayArea.y + displayArea.height - contentSize.height,
       Math.max(displayArea.y, fromRect.y + (fromRect.height - contentSize.height) / 2),
     ),
   };
 
-  const anchor = { x: fromRect.x, y: fromRect.y + fromRect.height / 2 };
+  const anchor = { x: fromRect.x + (I18nManager.isRTL ? arrowSize.width : 0), y: fromRect.y + fromRect.height / 2 };
 
-  return { origin, anchor, placement: 'left' };
+  return { origin, anchor, placement: 'start' };
 };
 
-const computeRightGeometry: ComputeGeometry = (displayArea, fromRect, contentSize, arrowSize) => {
+const computeEndGeometry: ComputeGeometry = (displayArea, fromRect, contentSize, arrowSize) => {
   const origin = {
     x: fromRect.x + fromRect.width + arrowSize.width,
     y: Math.min(
@@ -103,12 +105,12 @@ const computeRightGeometry: ComputeGeometry = (displayArea, fromRect, contentSiz
 
   const anchor = { x: fromRect.x + fromRect.width, y: fromRect.y + fromRect.height / 2 };
 
-  return { origin, anchor, placement: 'right' };
+  return { origin, anchor, placement: 'end' };
 };
 
 const computeAutoGeometry = (displayArea: Rect, fromRect: Rect, contentSize: Size, arrowSize: Size): Geometry => {
   let geom: Geometry | null = null;
-  const placements: Placement[] = ['left', 'top', 'right', 'bottom'];
+  const placements: Placement[] = ['start', 'top', 'end', 'bottom'];
   for (let i = 0; i < 4; i += 1) {
     const placement = placements[i];
     geom = computeGeometry(contentSize, placement, fromRect, displayArea, arrowSize);

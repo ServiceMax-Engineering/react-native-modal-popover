@@ -12,6 +12,7 @@ import {
   View,
   ViewStyle,
   StyleProp,
+  I18nManager,
 } from 'react-native';
 import { computeGeometry, Geometry, Placement, Rect, Size } from './PopoverGeometry';
 
@@ -49,16 +50,16 @@ const styles = StyleSheet.create({
   arrow: {
     position: 'absolute',
     borderTopColor: '#f2f2f2',
-    borderRightColor: 'transparent',
+    borderEndColor: 'transparent',
     borderBottomColor: 'transparent',
-    borderLeftColor: 'transparent',
+    borderStartColor: 'transparent',
   },
 });
 
 const ARROW_DEG: { [index in Placement]: string } = {
   bottom: '-180deg',
-  left: '-90deg',
-  right: '90deg',
+  start: I18nManager.isRTL ? '90deg' : '-90deg',
+  end: I18nManager.isRTL ? '-90deg' : '90deg',
   top: '0deg',
 };
 
@@ -102,7 +103,7 @@ export class Popover extends React.PureComponent<PopoverProps, PopoverState> {
       x: PropTypes.number,
       y: PropTypes.number,
     }),
-    placement: PropTypes.oneOf(['left', 'top', 'right', 'bottom', 'auto']),
+    placement: PropTypes.oneOf(['start', 'top', 'end', 'bottom', 'auto']),
     fromRect: PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
@@ -272,9 +273,9 @@ export class Popover extends React.PureComponent<PopoverProps, PopoverState> {
           borderTopWidth: height / 2,
           left: anchor.x - origin.x - width / 2,
           top: anchor.y - origin.y - height / 2,
-          borderRightWidth: width / 2,
+          borderEndWidth: width / 2,
           borderBottomWidth: height / 2,
-          borderLeftWidth: width / 2,
+          borderStartWidth: width / 2,
           transform: [
             {
               // Animation is workaround for https://github.com/facebook/react-native/issues/14161
