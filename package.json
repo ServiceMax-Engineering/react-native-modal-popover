@@ -23,7 +23,6 @@
   "scripts": {
     "compile": "rm -rf ./build/* && tsc",
     "prepublish": "yarn run compile",
-    "prepare": "yarn run compile",
     "tsc:watch": "yarn run tsc --watch"
   },
   "devDependencies": {
