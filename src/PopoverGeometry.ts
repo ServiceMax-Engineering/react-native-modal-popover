@@ -110,7 +110,7 @@ const computeEndGeometry: ComputeGeometry = (displayArea, fromRect, contentSize,
 
 const computeAutoGeometry = (displayArea: Rect, fromRect: Rect, contentSize: Size, arrowSize: Size): Geometry => {
   let geom: Geometry | null = null;
-  const placements: Placement[] = ['start', 'top', 'end', 'bottom'];
+  const placements: Placement[] = ['start', 'end', 'top', 'bottom'];
   for (let i = 0; i < 4; i += 1) {
     const placement = placements[i];
     geom = computeGeometry(contentSize, placement, fromRect, displayArea, arrowSize);
